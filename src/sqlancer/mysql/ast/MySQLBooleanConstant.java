@@ -1,5 +1,6 @@
 package sqlancer.mysql.ast;
 
+import sqlancer.IgnoreMeException;
 import sqlancer.mysql.MySQLSchema;
 
 public class MySQLBooleanConstant extends MySQLConstant {
@@ -58,20 +59,11 @@ public class MySQLBooleanConstant extends MySQLConstant {
 
     @Override
     public MySQLConstant isEquals(MySQLConstant rightVal) {
-        if (rightVal.isBoolean()) {
-            return MySQLConstant.createBoolean(this.value == rightVal.asBooleanNotNull());
-        }
-        throw new UnsupportedOperationException("Cannot compare boolean with non-boolean values.");
+        throw new IgnoreMeException();
     }
-
 
     @Override
     protected MySQLConstant isLessThan(MySQLConstant rightVal) {
-        if (rightVal.isBoolean()) {
-            return MySQLConstant.createBoolean(!this.value && rightVal.asBooleanNotNull());
-        }
-        throw new UnsupportedOperationException("Cannot compare boolean with non-boolean values.");
+        throw new IgnoreMeException();
     }
-
-
 }
