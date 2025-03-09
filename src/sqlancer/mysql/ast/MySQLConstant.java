@@ -17,9 +17,7 @@ public abstract class MySQLConstant implements MySQLExpression {
         return false;
     }
 
-    protected boolean isBoolean() {
-        return false;
-    }
+
 
     public abstract static class MySQLNoPQSConstant extends MySQLConstant {
 

@@ -18,10 +18,7 @@ public class MySQLBooleanConstant extends MySQLConstant {
         return new MySQLBooleanConstant(false);
     }
 
-    @Override
-    public boolean isBoolean() {
-        return true;
-    }
+
 
     @Override
     public boolean asBooleanNotNull() {
