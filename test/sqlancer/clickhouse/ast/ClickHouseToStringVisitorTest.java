@@ -6,6 +6,7 @@ import sqlancer.clickhouse.ClickHouseVisitor;
 import sqlancer.clickhouse.ast.constant.ClickHouseInt8Constant;
 import sqlancer.common.schema.TableIndex;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +38,7 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectATest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table = new ClickHouseSchema.ClickHouseTable("t", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table = createTestTable("t", empty_col_list);
         ClickHouseTableReference table_ref = new ClickHouseTableReference(table, null);
         ClickHouseSchema.ClickHouseColumn a_col = new ClickHouseSchema.ClickHouseColumn("a",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, table);
@@ -56,9 +55,7 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectAasBTest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table = new ClickHouseSchema.ClickHouseTable("t", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table = createTestTable("t", empty_col_list);
         ClickHouseTableReference table_ref = new ClickHouseTableReference(table, null);
         ClickHouseSchema.ClickHouseColumn a_col = new ClickHouseSchema.ClickHouseColumn("a",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, table);
@@ -77,9 +74,7 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectABTest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table = new ClickHouseSchema.ClickHouseTable("t", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table = createTestTable("t", empty_col_list);
         ClickHouseTableReference table_ref = new ClickHouseTableReference(table, null);
         ClickHouseSchema.ClickHouseColumn a_col = new ClickHouseSchema.ClickHouseColumn("a",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, table);
@@ -100,9 +95,7 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectWhereAGreaterBTest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table = new ClickHouseSchema.ClickHouseTable("t", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table = createTestTable("t", empty_col_list);
         ClickHouseTableReference table_ref = new ClickHouseTableReference(table, null);
         ClickHouseSchema.ClickHouseColumn a_col = new ClickHouseSchema.ClickHouseColumn("a",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, table);
@@ -125,9 +118,7 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectWhereAGreaterConstTest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table = new ClickHouseSchema.ClickHouseTable("t", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table = createTestTable("t", empty_col_list);
         ClickHouseTableReference table_ref = new ClickHouseTableReference(table, null);
         ClickHouseSchema.ClickHouseColumn a_col = new ClickHouseSchema.ClickHouseColumn("a",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, table);
@@ -151,9 +142,7 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectSumAGroupByBTest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table = new ClickHouseSchema.ClickHouseTable("t", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table = createTestTable("t", empty_col_list);
         ClickHouseTableReference table_ref = new ClickHouseTableReference(table, null);
         ClickHouseSchema.ClickHouseColumn a_col = new ClickHouseSchema.ClickHouseColumn("a",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, table);
@@ -176,11 +165,8 @@ class ClickHouseToStringVisitorTest {
     @Test
     void selectCrossJoinTest() {
         List<ClickHouseSchema.ClickHouseColumn> empty_col_list = Collections.emptyList();
-        List<TableIndex> indexes = Collections.emptyList();
-        ClickHouseSchema.ClickHouseTable table1 = new ClickHouseSchema.ClickHouseTable("t1", empty_col_list, indexes,
-                false);
-        ClickHouseSchema.ClickHouseTable table2 = new ClickHouseSchema.ClickHouseTable("t2", empty_col_list, indexes,
-                false);
+        ClickHouseSchema.ClickHouseTable table1 = createTestTable("t1", empty_col_list);
+        ClickHouseSchema.ClickHouseTable table2 = createTestTable("t2", empty_col_list);
         ClickHouseTableReference table1_ref = new ClickHouseTableReference(table1, null);
         ClickHouseTableReference table2_ref = new ClickHouseTableReference(table2, null);
         ClickHouseSchema.ClickHouseColumn a1_col = new ClickHouseSchema.ClickHouseColumn("a1",
@@ -214,7 +200,6 @@ class ClickHouseToStringVisitorTest {
 
     @Test
     void selectCrossJoinAliasedTest() {
-        List<TableIndex> indexes = Collections.emptyList();
         ClickHouseSchema.ClickHouseColumn a1_col = new ClickHouseSchema.ClickHouseColumn("a1",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
         ClickHouseSchema.ClickHouseColumn b1_col = new ClickHouseSchema.ClickHouseColumn("b1",
@@ -223,10 +208,8 @@ class ClickHouseToStringVisitorTest {
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
         ClickHouseSchema.ClickHouseColumn b2_col = new ClickHouseSchema.ClickHouseColumn("b2",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
-        ClickHouseSchema.ClickHouseTable table1 = new ClickHouseSchema.ClickHouseTable("t1",
-                Arrays.asList(a1_col, b1_col), indexes, false);
-        ClickHouseSchema.ClickHouseTable table2 = new ClickHouseSchema.ClickHouseTable("t2",
-                Arrays.asList(a2_col, b2_col), indexes, false);
+        ClickHouseSchema.ClickHouseTable table1 = createTestTable("t1", Arrays.asList(a1_col, b1_col));
+        ClickHouseSchema.ClickHouseTable table2 = createTestTable("t2", Arrays.asList(a2_col, b2_col));
         a1_col.setTable(table1);
         b1_col.setTable(table1);
         a2_col.setTable(table2);
@@ -237,10 +220,10 @@ class ClickHouseToStringVisitorTest {
 
         List<ClickHouseColumnReference> t1_col_ref = table1_ref.getColumnReferences();
         ClickHouseColumnReference a1_ref = t1_col_ref.get(0);
-        ClickHouseColumnReference a2_ref = t1_col_ref.get(1);
+        ClickHouseColumnReference b1_ref = t1_col_ref.get(1);
 
         List<ClickHouseColumnReference> t2_col_ref = table2_ref.getColumnReferences();
-        ClickHouseColumnReference b1_ref = t2_col_ref.get(0);
+        ClickHouseColumnReference a2_ref = t2_col_ref.get(0);
         ClickHouseColumnReference b2_ref = t2_col_ref.get(1);
 
         ClickHouseSelect select = new ClickHouseSelect();
@@ -250,13 +233,12 @@ class ClickHouseToStringVisitorTest {
                 ClickHouseExpression.ClickHouseJoin.JoinType.CROSS);
         select.setJoinClauses(Arrays.asList(join));
         String result = ClickHouseVisitor.asString(select);
-        String answer = "SELECT left.a1, left.b1, right.a2, right.b2 FROM t1 AS left JOIN t2 AS right";
+        String answer = "SELECT left.a1, right.a2, left.b1, right.b2 FROM t1 AS left JOIN t2 AS right";
         assertEquals(answer, result);
     }
 
     @Test
     void selectJoinONTest() {
-        List<TableIndex> indexes = Collections.emptyList();
         ClickHouseSchema.ClickHouseColumn a1_col = new ClickHouseSchema.ClickHouseColumn("a1",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
         ClickHouseSchema.ClickHouseColumn b1_col = new ClickHouseSchema.ClickHouseColumn("b1",
@@ -265,10 +247,8 @@ class ClickHouseToStringVisitorTest {
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
         ClickHouseSchema.ClickHouseColumn b2_col = new ClickHouseSchema.ClickHouseColumn("b2",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
-        ClickHouseSchema.ClickHouseTable table1 = new ClickHouseSchema.ClickHouseTable("t1",
-                Arrays.asList(a1_col, b1_col), indexes, false);
-        ClickHouseSchema.ClickHouseTable table2 = new ClickHouseSchema.ClickHouseTable("t2",
-                Arrays.asList(a2_col, b2_col), indexes, false);
+        ClickHouseSchema.ClickHouseTable table1 = createTestTable("t1", Arrays.asList(a1_col, b1_col));
+        ClickHouseSchema.ClickHouseTable table2 = createTestTable("t2", Arrays.asList(a2_col, b2_col));
         a1_col.setTable(table1);
         b1_col.setTable(table1);
         a2_col.setTable(table2);
@@ -300,7 +280,6 @@ class ClickHouseToStringVisitorTest {
 
     @Test
     void selectJoinONAliasedTest() {
-        List<TableIndex> indexes = Collections.emptyList();
         ClickHouseSchema.ClickHouseColumn a1_col = new ClickHouseSchema.ClickHouseColumn("a1",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
         ClickHouseSchema.ClickHouseColumn b1_col = new ClickHouseSchema.ClickHouseColumn("b1",
@@ -309,10 +288,8 @@ class ClickHouseToStringVisitorTest {
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
         ClickHouseSchema.ClickHouseColumn b2_col = new ClickHouseSchema.ClickHouseColumn("b2",
                 ClickHouseSchema.ClickHouseLancerDataType.getRandom(), false, false, null);
-        ClickHouseSchema.ClickHouseTable table1 = new ClickHouseSchema.ClickHouseTable("t1",
-                Arrays.asList(a1_col, b1_col), indexes, false);
-        ClickHouseSchema.ClickHouseTable table2 = new ClickHouseSchema.ClickHouseTable("t2",
-                Arrays.asList(a2_col, b2_col), indexes, false);
+        ClickHouseSchema.ClickHouseTable table1 = createTestTable("t1", Arrays.asList(a1_col, b1_col));
+        ClickHouseSchema.ClickHouseTable table2 = createTestTable("t2", Arrays.asList(a2_col, b2_col));
         a1_col.setTable(table1);
         b1_col.setTable(table1);
         a2_col.setTable(table2);
@@ -341,4 +318,11 @@ class ClickHouseToStringVisitorTest {
         String answer = "SELECT left.a1, right.a2, left.b1, right.b2 FROM t1 AS left INNER JOIN t2 AS right ON ((left.a1)=(right.a2))";
         assertEquals(answer, result);
     }
+
+    private static ClickHouseSchema.ClickHouseTable createTestTable(String name,
+            List<ClickHouseSchema.ClickHouseColumn> columns) {
+        List<TableIndex> indexes = Collections.emptyList();
+        return new ClickHouseSchema.ClickHouseTable(name, columns, indexes, false, Collections.emptyList());
+    }
+
 }
