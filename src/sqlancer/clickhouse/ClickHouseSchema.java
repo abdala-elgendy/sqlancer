@@ -204,9 +204,20 @@ public class ClickHouseSchema extends AbstractSchema<ClickHouseGlobalState, Clic
     public static class ClickHouseTable
             extends AbstractRelationalTable<ClickHouseColumn, TableIndex, ClickHouseGlobalState> {
 
+        private final List<ClickHouseColumn> primaryKeyColumns;
+
         public ClickHouseTable(String tableName, List<ClickHouseColumn> columns, List<TableIndex> indexes,
-                boolean isView) {
+                boolean isView, List<ClickHouseColumn> primaryKeyColumns) {
             super(tableName, columns, indexes, isView);
+            this.primaryKeyColumns = primaryKeyColumns != null ? primaryKeyColumns : Collections.emptyList();
+        }
+
+        public List<ClickHouseColumn> getPrimaryKeyColumns() {
+            return primaryKeyColumns;
+        }
+
+        public boolean hasPrimaryKey() {
+            return !primaryKeyColumns.isEmpty();
         }
     }
 
@@ -217,12 +228,15 @@ public class ClickHouseSchema extends AbstractSchema<ClickHouseGlobalState, Clic
             List<ClickHouseColumn> databaseColumns = getTableColumns(con, tableName);
             List<TableIndex> indexes = Collections.emptyList();
             boolean isView = tableName.startsWith("v");
-            ClickHouseTable t = new ClickHouseTable(tableName, databaseColumns, indexes, isView);
+
+            // Get primary key columns
+            List<ClickHouseColumn> pkColumns = getPrimaryKeyColumns(con, tableName, databaseColumns);
+
+            ClickHouseTable t = new ClickHouseTable(tableName, databaseColumns, indexes, isView, pkColumns);
             for (ClickHouseColumn c : databaseColumns) {
                 c.setTable(t);
             }
             databaseTables.add(t);
-
         }
         return new ClickHouseSchema(databaseTables);
     }
@@ -256,6 +270,27 @@ public class ClickHouseSchema extends AbstractSchema<ClickHouseGlobalState, Clic
             }
         }
         return columns;
+    }
+
+    private static List<ClickHouseColumn> getPrimaryKeyColumns(SQLConnection con, String tableName,
+            List<ClickHouseColumn> columns) throws SQLException {
+        List<ClickHouseColumn> pkColumns = new ArrayList<>();
+        try (Statement s = con.createStatement()) {
+
+            String query = String.format(
+                    "SELECT primary_key_columns_list FROM system.tables WHERE database = currentDatabase() AND name = '%s'",
+                    tableName);
+            try (ResultSet rs = s.executeQuery(query)) {
+                if (rs.next()) {
+                    String[] pkColumnNames = rs.getString(1).split(",");
+                    for (String pkColumnName : pkColumnNames) {
+                        columns.stream().filter(c -> c.getName().equals(pkColumnName.trim())).findFirst()
+                                .ifPresent(pkColumns::add);
+                    }
+                }
+            }
+        }
+        return pkColumns;
     }
 
 }
