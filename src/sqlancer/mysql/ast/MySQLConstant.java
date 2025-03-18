@@ -17,6 +17,10 @@ public abstract class MySQLConstant implements MySQLExpression {
         return false;
     }
 
+    public boolean isBoolean() {
+        return false;
+    }
+
     public abstract static class MySQLNoPQSConstant extends MySQLConstant {
 
         @Override
@@ -423,15 +427,15 @@ public abstract class MySQLConstant implements MySQLExpression {
     public abstract String getTextRepresentation();
 
     public static MySQLConstant createFalse() {
-        return MySQLConstant.createIntConstant(0);
+        return new MySQLBooleanConstant(false);
     }
 
     public static MySQLConstant createBoolean(boolean isTrue) {
-        return MySQLConstant.createIntConstant(isTrue ? 1 : 0);
+        return new MySQLBooleanConstant(isTrue);
     }
 
     public static MySQLConstant createTrue() {
-        return MySQLConstant.createIntConstant(1);
+        return new MySQLBooleanConstant(true);
     }
 
     @Override
@@ -452,5 +456,80 @@ public abstract class MySQLConstant implements MySQLExpression {
     public abstract MySQLDataType getType();
 
     protected abstract MySQLConstant isLessThan(MySQLConstant rightVal);
+
+    public static class MySQLBooleanConstant extends MySQLConstant {
+        private final boolean value;
+
+        public MySQLBooleanConstant(boolean value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean asBooleanNotNull() {
+            return value;
+        }
+
+        @Override
+        public String getTextRepresentation() {
+            return value ? "TRUE" : "FALSE";
+        }
+
+        @Override
+        public MySQLConstant isEquals(MySQLConstant rightVal) {
+            if (rightVal.isNull()) {
+                return MySQLConstant.createNullConstant();
+            } else if (rightVal.isBoolean()) {
+                return MySQLConstant.createBooleanConstant(value == rightVal.asBooleanNotNull());
+            } else if (rightVal.isString()) {
+                return MySQLConstant
+                        .createBooleanConstant(value == rightVal.castAs(CastType.SIGNED).asBooleanNotNull());
+            } else {
+                throw new AssertionError(rightVal);
+            }
+        }
+
+        @Override
+        public MySQLConstant castAs(CastType type) {
+            switch (type) {
+            case SIGNED:
+                return MySQLConstant.createIntConstant(value ? 1 : 0);
+            case UNSIGNED:
+                return MySQLConstant.createUnsignedIntConstant(value ? 1 : 0);
+            default:
+                throw new AssertionError(type);
+            }
+        }
+
+        @Override
+        public String castAsString() {
+            return value ? "1" : "0";
+        }
+
+        @Override
+        public MySQLDataType getType() {
+            return MySQLDataType.BOOLEAN;
+        }
+
+        @Override
+        protected MySQLConstant isLessThan(MySQLConstant rightVal) {
+            if (rightVal.isNull()) {
+                return MySQLConstant.createNullConstant();
+            } else if (rightVal.isString()) {
+                return isLessThan(rightVal.castAs(CastType.SIGNED));
+            } else {
+                assert rightVal.isBoolean();
+                return MySQLConstant.createBooleanConstant((value ? 1 : 0) < (rightVal.asBooleanNotNull() ? 1 : 0));
+            }
+        }
+
+        @Override
+        public boolean isBoolean() {
+            return true;
+        }
+    }
+
+    public static MySQLConstant createBooleanConstant(boolean value) {
+        return new MySQLBooleanConstant(value);
+    }
 
 }

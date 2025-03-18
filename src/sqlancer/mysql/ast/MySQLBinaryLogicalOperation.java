@@ -28,7 +28,7 @@ public class MySQLBinaryLogicalOperation implements MySQLExpression {
                         return MySQLConstant.createFalse();
                     }
                 } else {
-                    return MySQLConstant.createBoolean(left.asBooleanNotNull() && right.asBooleanNotNull());
+                    return MySQLConstant.createBooleanConstant(left.asBooleanNotNull() && right.asBooleanNotNull());
                 }
             }
         },

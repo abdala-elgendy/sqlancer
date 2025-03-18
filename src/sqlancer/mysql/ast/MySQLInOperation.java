@@ -52,17 +52,16 @@ public class MySQLInOperation implements MySQLExpression {
             if (isEquals.isNull()) {
                 isNull = true;
             } else {
-                if (isEquals.getInt() == 1) {
-                    return MySQLConstant.createBoolean(isTrue);
+                if (isEquals.asBooleanNotNull()) {
+                    return MySQLConstant.createBooleanConstant(isTrue);
                 }
             }
         }
         if (isNull) {
             return MySQLConstant.createNullConstant();
         } else {
-            return MySQLConstant.createBoolean(!isTrue);
+            return MySQLConstant.createBooleanConstant(!isTrue);
         }
-
     }
 
     public boolean isTrue() {

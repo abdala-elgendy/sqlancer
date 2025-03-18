@@ -52,7 +52,7 @@ public class MySQLUnaryPostfixOperation implements MySQLExpression {
         if (negate) {
             val = !val;
         }
-        return MySQLConstant.createIntConstant(val ? 1 : 0);
+        return MySQLConstant.createBooleanConstant(val);
     }
 
 }

@@ -13,7 +13,7 @@ public class MySQLUnaryPrefixOperation extends UnaryOperatorNode<MySQLExpression
         NOT("!", "NOT") {
             @Override
             public MySQLConstant applyNotNull(MySQLConstant expr) {
-                return MySQLConstant.createIntConstant(expr.asBooleanNotNull() ? 0 : 1);
+                return MySQLConstant.createBooleanConstant(!expr.asBooleanNotNull());
             }
         },
         PLUS("+") {

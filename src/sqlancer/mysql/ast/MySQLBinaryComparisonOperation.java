@@ -18,6 +18,9 @@ public class MySQLBinaryComparisonOperation implements MySQLExpression {
             @Override
             public MySQLConstant getExpectedValue(MySQLConstant leftVal, MySQLConstant rightVal) {
                 MySQLConstant isEquals = leftVal.isEquals(rightVal);
+                if (isEquals.isBoolean()) {
+                    return MySQLConstant.createBooleanConstant(!isEquals.asBooleanNotNull());
+                }
                 if (isEquals.getType() == MySQLDataType.INT) {
                     return MySQLConstant.createIntConstant(1 - isEquals.getInt());
                 }
@@ -25,19 +28,20 @@ public class MySQLBinaryComparisonOperation implements MySQLExpression {
             }
         },
         LESS("<") {
-
             @Override
             public MySQLConstant getExpectedValue(MySQLConstant leftVal, MySQLConstant rightVal) {
                 return leftVal.isLessThan(rightVal);
             }
         },
         LESS_EQUALS("<=") {
-
             @Override
             public MySQLConstant getExpectedValue(MySQLConstant leftVal, MySQLConstant rightVal) {
                 MySQLConstant lessThan = leftVal.isLessThan(rightVal);
                 if (lessThan == null) {
                     return null;
+                }
+                if (lessThan.isBoolean()) {
+                    return lessThan;
                 }
                 if (lessThan.getType() == MySQLDataType.INT && lessThan.getInt() == 0) {
                     return leftVal.isEquals(rightVal);
