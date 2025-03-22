@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - main
+      - ClickHouse-supp
     paths:
       - 'src/**'
       - 'test/**'
@@ -11,7 +11,7 @@ on:
       - 'pom.xml'
   pull_request:
     branches:
-      - main
+      - ClickHouse-supp
     paths:
       - 'src/**'
       - 'test/**'
