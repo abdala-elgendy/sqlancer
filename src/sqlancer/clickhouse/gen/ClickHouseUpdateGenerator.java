@@ -38,4 +38,4 @@ public class ClickHouseUpdateGenerator {
         sb.append(whereClause.toString());
         return new SQLQueryAdapter(sb.toString());
     }
-} 
+}

@@ -33,8 +33,7 @@ public class ClickHouseProvider extends SQLProviderAdapter<ClickHouseGlobalState
     }
 
     public enum Action implements AbstractAction<ClickHouseGlobalState> {
-        INSERT(ClickHouseInsertGenerator::getQuery),
-        UPDATE(ClickHouseUpdateGenerator::getQuery);
+        INSERT(ClickHouseInsertGenerator::getQuery), UPDATE(ClickHouseUpdateGenerator::getQuery);
 
         private final SQLQueryProvider<ClickHouseGlobalState> sqlQueryProvider;
 
