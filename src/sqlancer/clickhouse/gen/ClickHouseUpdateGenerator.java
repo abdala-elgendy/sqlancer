@@ -19,7 +19,7 @@ public class ClickHouseUpdateGenerator {
         List<ClickHouseColumn> columns = table.getColumns();
         List<ClickHouseColumn> targetColumns = Randomly.nonEmptySubset(columns);
         List<ClickHouseExpression> values = new ArrayList<>();
-        for (ClickHouseColumn c : targetColumns) {
+        for (int i = 0; i < targetColumns.size(); i++) {
             values.add(ClickHouseCreateConstant.createInt32Constant(Randomly.getNotCachedInteger(0, 100)));
         }
         StringBuilder sb = new StringBuilder();
