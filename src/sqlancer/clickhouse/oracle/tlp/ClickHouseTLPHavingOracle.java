@@ -39,7 +39,7 @@ public class ClickHouseTLPHavingOracle extends ClickHouseTLPBase {
         select.setGroupByClause(groupByColumns);
         select.setHavingClause(null);
         String originalQueryString = ClickHouseVisitor.asString(select);
-        originalQueryString += " SETTINGS aggregate_functions_null_for_empty=1, enable_optimize_predicate_expression=0"; // https://github.com/ClickHouse/ClickHouse/issues/12264
+        originalQueryString += " SETTINGS aggregate_functions_null_for_empty=1, enable_optimize_predicate_expression=0";
 
         List<String> resultSet = ComparatorHelper.getResultSetFirstColumnAsString(originalQueryString, errors, state);
 
@@ -58,7 +58,7 @@ public class ClickHouseTLPHavingOracle extends ClickHouseTLPBase {
                 ClickHouseUnaryPostfixOperation.ClickHouseUnaryPostfixOperator.IS_NULL, false));
         String thirdQueryString = ClickHouseVisitor.asString(select);
         String combinedString = firstQueryString + " UNION ALL " + secondQueryString + " UNION ALL " + thirdQueryString;
-        combinedString += " SETTINGS aggregate_functions_null_for_empty=1, enable_optimize_predicate_expression=0"; // https://github.com/ClickHouse/ClickHouse/issues/12264
+        combinedString += " SETTINGS aggregate_functions_null_for_empty=1, enable_optimize_predicate_expression=0";
         List<String> secondResultSet = ComparatorHelper.getResultSetFirstColumnAsString(combinedString, errors, state);
         if (state.getOptions().logEachSelect()) {
             state.getLogger().writeCurrent(originalQueryString);

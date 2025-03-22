@@ -20,6 +20,7 @@ import sqlancer.StatementExecutor;
 import sqlancer.clickhouse.ClickHouseProvider.ClickHouseGlobalState;
 import sqlancer.clickhouse.gen.ClickHouseCommon;
 import sqlancer.clickhouse.gen.ClickHouseInsertGenerator;
+import sqlancer.clickhouse.gen.ClickHouseUpdateGenerator;
 import sqlancer.clickhouse.gen.ClickHouseTableGenerator;
 import sqlancer.common.query.SQLQueryAdapter;
 import sqlancer.common.query.SQLQueryProvider;
@@ -32,8 +33,7 @@ public class ClickHouseProvider extends SQLProviderAdapter<ClickHouseGlobalState
     }
 
     public enum Action implements AbstractAction<ClickHouseGlobalState> {
-
-        INSERT(ClickHouseInsertGenerator::getQuery);
+        INSERT(ClickHouseInsertGenerator::getQuery), UPDATE(ClickHouseUpdateGenerator::getQuery);
 
         private final SQLQueryProvider<ClickHouseGlobalState> sqlQueryProvider;
 
@@ -52,6 +52,8 @@ public class ClickHouseProvider extends SQLProviderAdapter<ClickHouseGlobalState
         switch (a) {
         case INSERT:
             return r.getInteger(0, globalState.getOptions().getMaxNumberInserts());
+        case UPDATE:
+            return r.getInteger(0, 5); // TODO: add method getMaxNumberUpdates in MainOptions class
         default:
             throw new AssertionError(a);
         }

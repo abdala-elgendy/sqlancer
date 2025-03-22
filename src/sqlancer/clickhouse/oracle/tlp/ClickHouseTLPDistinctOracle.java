@@ -21,6 +21,7 @@ public class ClickHouseTLPDistinctOracle extends ClickHouseTLPBase {
         select.setSelectType(ClickHouseSelect.SelectType.DISTINCT);
         select.setWhereClause(null);
         String originalQueryString = ClickHouseVisitor.asString(select);
+        originalQueryString += " SETTINGS aggregate_functions_null_for_empty=1, enable_optimize_predicate_expression=0";
 
         List<String> resultSet = ComparatorHelper.getResultSetFirstColumnAsString(originalQueryString, errors, state);
 
