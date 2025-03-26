@@ -67,7 +67,6 @@ public class MySQLAggregate implements MySQLExpression {
         this.windowSpecification = windowSpec;
     }
 
-
     public boolean isWindowFunction() {
         return windowSpecification != null;
     }
